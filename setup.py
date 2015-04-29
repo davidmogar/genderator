@@ -9,13 +9,9 @@ version = re.search(
     open('genderator/__init__.py').read(),
     re.M).group(1)
 
-with open("README.md", "rb") as f:
-    long_description = f.read().decode("utf-8")
-
 setup(name='genderator',
       version=version,
       description='Python library to guess gender given a spanish full name',
-      long_description=long_description,
       author='David Moreno-Garcia',
       author_email='david.mogar@gmail.com',
       license='MIT',
