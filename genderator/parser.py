@@ -68,6 +68,15 @@ class Parser:
                     yield line
 
     def guess_gender(self, fullname):
+        """
+        Guess the gender of the given full name.
+
+        Params:
+            fullname: Full name from where we want to guess the gender.
+
+        Returns:
+            A JSON string with all the computed information.
+        """
         if isinstance(fullname, str):
             fullname = Normalizer.normalize(fullname)
             names, surnames = self._classify(fullname)
