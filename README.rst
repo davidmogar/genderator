@@ -64,7 +64,8 @@ Output:
             "david": 0.991
         },
         "surnames": {
-            "moreno": 1.0
+            "moreno": 1.0,
+            "garcia": 1.0
         },
         "real_name": "david",
         "gender": "Male",
