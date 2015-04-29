@@ -16,7 +16,7 @@ setup(name='genderator',
       author_email='david.mogar@gmail.com',
       license='MIT',
       url='https://github.com/davidmogar/genderator',
-      download_url='https://github.com/davidmogar/genderator/tarball/0.1.0',
-      keywords=['gender','guess','spanish','name'],
+      download_url='https://github.com/davidmogar/genderator/tarball/' + version,
+      keywords=['gender', 'guess', 'spanish', 'name'],
       packages=find_packages(exclude=['tests'])
       )
