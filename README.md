@@ -27,10 +27,10 @@ The next code shows a sample usage of this library:
 
 ```python
 import collections
+import genderator
 import json
-from genderator.genderator import Genderator
 
-guesser = Genderator()
+guesser = genderator.Parser()
 answer = guesser.guess_gender('David Moreno García')
 if answer:
     # Keep returned keys order
