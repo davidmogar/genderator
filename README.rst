@@ -20,7 +20,7 @@ Installation
 ------------
 
 The easiest way to install the latest version is by using pip to pull it
-from PyPI:
+from `PyPI <https://pypi.python.org/pypi/genderator>`__:
 
 ::
 
