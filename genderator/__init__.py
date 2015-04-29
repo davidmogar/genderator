@@ -1,3 +1,3 @@
-__version__ = '0.2'
+__version__ = '0.2.1'
 
-from genderator.parser import Genderator
+from genderator.parser import Parser
