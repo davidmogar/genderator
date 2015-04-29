@@ -1,4 +1,7 @@
 # genderator
+![Travis badge](https://img.shields.io/travis/davidmogar/genderator.svg)
+![PyPi badge](https://img.shields.io/pypi/v/genderator.svg "PyPi badge")
+![License badge](https://img.shields.io/github/license/davidmogar/genderator.svg "License badge")
 
 Genderator is a Python library to process spanish names to guess their gender.
 
