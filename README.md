@@ -1,5 +1,5 @@
 # genderator
-![Travis badge](https://img.shields.io/travis/davidmogar/genderator.svg)
+![Travis badge](https://img.shields.io/travis/davidmogar/genderator.svg "Travis badge")
 ![PyPi badge](https://img.shields.io/pypi/v/genderator.svg "PyPi badge")
 ![License badge](https://img.shields.io/github/license/davidmogar/genderator.svg "License badge")
 
