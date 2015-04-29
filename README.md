@@ -13,7 +13,7 @@ For this to work, the libray uses the next datasets from [Instituto Nacional de 
 
 ## Installation
 
-The easiest way to install the latest version is by using pip to pull it from PyPI:
+The easiest way to install the latest version is by using pip to pull it from [PyPI](https://pypi.python.org/pypi/genderator):
 ```
 pip install genderator
 ```
