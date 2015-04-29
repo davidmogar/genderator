@@ -94,7 +94,7 @@ class Genderator:
             if word in self.__ratios:
                 # If word could be a name or surname
                 ratio = self.__ratios[word]
-                if ratio < 0.5 and not name_complete:
+                if not names or (ratio < 0.5 and not name_complete):
                     names[word] = 1 - ratio
                 else:
                     surnames[word] = ratio
@@ -149,6 +149,7 @@ class Genderator:
         answer['names'] = names
         answer['surnames'] = surnames
         answer['real_name'] = real_name
-        answer['gender'] = 'Male' if ratio > 0.5 else 'Female'
-        answer['confidence'] = ratio
+        male = ratio > 0.5
+        answer['gender'] = 'Male' if male else 'Female'
+        answer['confidence'] = ratio if male else 1 - ratio
         return json.dumps(answer)
