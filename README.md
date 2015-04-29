@@ -28,12 +28,12 @@ The next code shows a sample usage of this library:
 ```python
 import collections
 import json
-from genderator import Genderator
+from genderator.genderator import Genderator
 
 guesser = Genderator()
 answer = guesser.guess_gender('David Moreno García')
 if answer:
-    # Keep the returned keys order
+    # Keep returned keys order
     parsed = json.JSONDecoder(object_pairs_hook=collections.OrderedDict).decode(answer)
     print(json.dumps(parsed, indent=4))
 else:
