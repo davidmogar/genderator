@@ -8,7 +8,7 @@ from .utils import Normalizer
 path = os.path.dirname(__file__)
 
 
-class Genderator:
+class Parser:
     __names, __ratios = {}, {}
     __surnames = []
 
@@ -30,7 +30,7 @@ class Genderator:
         This file contains a list of spanish given names with the probability for
         each one to be a male or female name.
         """
-        for line in self.remove_file_comments('data/names_ine'):
+        for line in self.remove_file_comments('names_ine'):
                 (name, prob_female, prob_male) = line.rstrip().split('\t')
                 self.__names[name] = float(prob_male)
 
@@ -41,7 +41,7 @@ class Genderator:
         The file contains a list of names and surnames with the probability for each
         one to be a name (lower values) or a surname (higher values).
         """
-        for line in self.remove_file_comments('data/name_surname_ratio'):
+        for line in self.remove_file_comments('name_surname_ratio'):
             (key, val) = line.rstrip().split('\t')
             self.__ratios[key] = float(val)
 
@@ -51,7 +51,7 @@ class Genderator:
 
         This file contains a list of spanish surnames.
         """
-        for line in self.remove_file_comments('data/surnames_ine'):
+        for line in self.remove_file_comments('surnames_ine'):
             self.__surnames.append(line.rstrip())
 
     def remove_file_comments(self, relative_path):
@@ -61,7 +61,7 @@ class Genderator:
         Params:
             file: File to be processed.
         """
-        with codecs.open(os.path.join(path, relative_path), 'r', 'UTF-8') as file:
+        with codecs.open(os.path.join(path, 'data', relative_path), 'r', 'UTF-8') as file:
             for line in file:
                 line = line.strip()
                 if not line.startswith('#'):
