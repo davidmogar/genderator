@@ -1,7 +1,7 @@
 genderator
 ==========
 .. image:: https://img.shields.io/travis/davidmogar/genderator.svg
-.. iamge:: https://img.shields.io/pypi/v/genderator.svg
+.. image:: https://img.shields.io/pypi/v/genderator.svg
 .. image:: https://img.shields.io/github/license/davidmogar/genderator.svg
 
 Genderator is a Python library to process spanish names to guess their
