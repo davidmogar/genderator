@@ -8,7 +8,7 @@ Genderator is a Python library to process spanish names to guess their
 gender.
 
 For this to work, the libray uses the next datasets from `Instituto
-Nacional de Estadística <http://www.ine.es>`__:
+Nacional de Estadística <http://www.ine.es>`_:
 
 -  **name\_surname\_ratio**: List of words that could be both, a name or
    a surname, and shows the probability to be a surname.
@@ -20,7 +20,7 @@ Installation
 ------------
 
 The easiest way to install the latest version is by using pip to pull it
-from `PyPI <https://pypi.python.org/pypi/genderator>`__:
+from `PyPI <https://pypi.python.org/pypi/genderator>`_:
 
 ::
 
