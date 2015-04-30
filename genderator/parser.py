@@ -9,10 +9,12 @@ path = os.path.dirname(__file__)
 
 
 class Parser:
+
     __names, __ratios = {}, {}
     __surnames = []
 
-    def __init__(self):
+    def __init__(self, force_split=False):
+        self.__force_split = force_split
         self._load_data()
 
     def _load_data(self):
@@ -81,10 +83,13 @@ class Parser:
             fullname = Normalizer.normalize(fullname)
             names, surnames = self._classify(fullname)
 
-            if names and surnames:
+            if names and (surnames or (self.__force_split and self._is_splittable(names))):
                 real_name, ratio = self._get_gender_ratio(list(names.keys()))
                 return self._create_answer(real_name, ratio, names, surnames)
-            pass
+
+    def _is_splittable(self, names):
+        return names[next(reversed(names))] < 1
+
 
     def _classify(self, fullname):
         """
