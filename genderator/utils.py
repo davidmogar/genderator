@@ -1,5 +1,5 @@
 import unicodedata
-from unidecode import unidecode
+
 class Normalizer:
 
     def normalize(text):
