@@ -197,4 +197,4 @@ class Parser:
         male = ratio > 0.5
         answer['gender'] = 'Male' if male else 'Female'
         answer['confidence'] = ratio if male else 1 - ratio
-        return json.dumps(answer)
+        return json.dumps(answer, ensure_ascii=False)
