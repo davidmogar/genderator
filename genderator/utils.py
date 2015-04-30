@@ -1,5 +1,5 @@
 import unicodedata
-
+from unidecode import unidecode
 class Normalizer:
 
     def normalize(text):
@@ -15,6 +15,7 @@ class Normalizer:
         text = Normalizer.remove_extra_whitespaces(text)
         text = Normalizer.replace_hyphens(text)
         text = Normalizer.remove_accent_marks(text)
+        text = Normalizer.remove_symbols(text)
 
         return text.lower()
 
@@ -59,4 +60,18 @@ class Normalizer:
             The text without accent marks.
         """
         return ''.join(c for c in unicodedata.normalize('NFKD', text.replace('ñ', '/n/'))
-                       if unicodedata.category(c) != 'Mn').replace('/n/', 'ñ')
+                       if unicodedata.category(c) != 'Mn').replace('/n/', 'ñ').strip()
+
+    @staticmethod
+    def remove_symbols(text):
+        """
+        Remove symbols from input text.
+
+        Params:
+            text: The text to be processed.
+
+        Returns:
+            The text without symbols.
+        """
+        return ''.join(c for c in unicodedata.normalize('NFKD', text.replace('ñ', '/n/'))
+                       if unicodedata.category(c) not in ['Sc', 'Sk', 'Sm', 'So']).replace('/n/', 'ñ').strip()
