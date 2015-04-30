@@ -96,28 +96,64 @@ class Parser:
         Returns:
             Two OrderedDicts of names and surnames with its confidence ratio.
         """
-        name_complete = False
+        keep_going, name_complete = True, False
         names, surnames = OrderedDict(), OrderedDict()
+        unclassified = []
 
         for word in fullname.split():
-            if word in self.__ratios:
-                # If word could be a name or surname
-                ratio = self.__ratios[word]
-                if not names or (ratio < 0.5 and not name_complete):
-                    names[word] = 1 - ratio
-                else:
-                    surnames[word] = ratio
-                    if ratio == 1:
+            keep_going = True
+            if unclassified:
+                unclassified.append(word)
+                test = ' '.join(unclassified)
+                prob = self._calculate_name_probability(test)
+                if prob is not None:
+                    if prob > 0.5 and not name_complete:
+                            names[test] = prob
+                    else:
+                        surnames[test] = 1 - prob
                         name_complete = True
-            else:
-                if word in self.__names:
-                    if not name_complete:
-                        names[word] = 1
-                elif word in self.__surnames:
-                    surnames[word] = 1
-                    name_complete = True
+                    keep_going = False
+                    unclassified.clear()
+            if keep_going:
+                if word in self.__ratios:
+                    # If word could be a name or surname
+                    ratio = self.__ratios[word]
+                    if not names or (ratio < 0.5 and not name_complete):
+                        names[word] = 1 - ratio
+                    else:
+                        surnames[word] = ratio
+                        if ratio == 1:
+                            name_complete = True
+                    unclassified.clear()
+                else:
+                    if word in self.__names:
+                        if not name_complete:
+                            names[word] = 1
+                        unclassified.clear()
+                    elif word in self.__surnames:
+                        if names:
+                            surnames[word] = 1
+                            name_complete = True
+                            unclassified.clear()
+                    else:
+                        if not unclassified:
+                            unclassified.append(word)
 
         return names, surnames
+
+    def _calculate_name_probability(self, word):
+        if word in self.__ratios:
+            # If word could be a name or surname
+            ratio = self.__ratios[word]
+            if ratio < 0.5:
+                return 1 - ratio
+            else:
+                return ratio
+        else:
+            if word in self.__names:
+                return 1
+            elif word in self.__surnames:
+                return 0
 
     def _get_gender_ratio(self, names):
         """
