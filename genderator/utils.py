@@ -1,5 +1,4 @@
-from unidecode import unidecode
-
+import unicodedata
 
 class Normalizer:
 
@@ -59,4 +58,5 @@ class Normalizer:
         Returns:
             The text without accent marks.
         """
-        return unidecode(text)
+        return ''.join(c for c in unicodedata.normalize('NFKD', text.replace('ñ', '/n/'))
+                       if unicodedata.category(c) != 'Mn').replace('/n/', 'ñ')
