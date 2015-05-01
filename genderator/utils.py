@@ -59,8 +59,13 @@ class Normalizer:
         Returns:
             The text without accent marks.
         """
-        return ''.join(c for c in unicodedata.normalize('NFKD', text.replace('ñ', '/n/'))
-                       if unicodedata.category(c) != 'Mn').replace('/n/', 'ñ').strip()
+        good_accents = {
+            u'\N{COMBINING TILDE}',
+            u'\N{COMBINING CEDILLA}'
+        }
+
+        return ''.join(c for c in unicodedata.normalize('NFKD', text)
+                       if unicodedata.category(c) != 'Mn' or c in good_accents)
 
     @staticmethod
     def remove_symbols(text):
@@ -73,5 +78,5 @@ class Normalizer:
         Returns:
             The text without symbols.
         """
-        return ''.join(c for c in unicodedata.normalize('NFKD', text.replace('ñ', '/n/'))
+        return ''.join(c for c in unicodedata.normalize('NFKC', text.replace('ñ', '/n/'))
                        if unicodedata.category(c) not in ['Sc', 'Sk', 'Sm', 'So']).replace('/n/', 'ñ').strip()
