@@ -1,6 +1,7 @@
 genderator
 ==========
 .. image:: https://img.shields.io/travis/davidmogar/genderator.svg
+:target: https://travis-ci.org/davidmogar/genderator
 .. image:: https://img.shields.io/pypi/v/genderator.svg
 .. image:: https://img.shields.io/github/license/davidmogar/genderator.svg
 
@@ -42,32 +43,17 @@ The next code shows a sample usage of this library:
 
 .. code:: python
 
-    import collections
     import genderator
-    import json
 
     guesser = genderator.Parser()
     answer = guesser.guess_gender('David Moreno García')
     if answer:
-        # Keep returned keys order
-        parsed = json.JSONDecoder(object_pairs_hook=collections.OrderedDict).decode(answer)
-        print(json.dumps(parsed, indent=4))
+        print(answer)
     else:
-        print('No answer')
+        print('Name doesn\'t match')
 
 Output:
 
-.. code:: json
+.. code::
 
-    {
-        "names": {
-            "david": 0.991
-        },
-        "surnames": {
-            "moreno": 1.0,
-            "garcia": 1.0
-        },
-        "real_name": "david",
-        "gender": "Male",
-        "confidence": 1.0
-    }
+    OrderedDict([('names', ['david']), ('surnames', ['moreno', 'garcia']), ('real_name', 'david'), ('gender', 'Male'), ('confidence', 1.0)])
