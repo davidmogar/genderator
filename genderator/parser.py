@@ -32,8 +32,8 @@ class Parser:
         This file contains a list of spanish given names with the probability for
         each one to be a male or female name.
         """
-        for line in self.remove_file_comments('names_ine'):
-                (name, prob_female, prob_male) = line.rstrip().split('\t')
+        for line in self.remove_file_comments('names_ine.tsv'):
+                (name, frequency, prob_male) = line.split('\t')
                 self.__names[name] = float(prob_male)
 
     def _load_name_surname_ratios(self):
@@ -43,8 +43,8 @@ class Parser:
         The file contains a list of names and surnames with the probability for each
         one to be a name (lower values) or a surname (higher values).
         """
-        for line in self.remove_file_comments('name_surname_ratio'):
-            (key, val) = line.rstrip().split('\t')
+        for line in self.remove_file_comments('name_surname_ratio.tsv'):
+            (key, val) = line.split('\t')
             self.__ratios[key] = float(val)
 
     def _load_surnames(self):
@@ -53,8 +53,8 @@ class Parser:
 
         This file contains a list of spanish surnames.
         """
-        for line in self.remove_file_comments('surnames_ine'):
-            self.__surnames.append(line.rstrip())
+        for line in self.remove_file_comments('surnames_ine.tsv'):
+            self.__surnames.append(line.split('\t')[0])
 
     def remove_file_comments(self, relative_path):
         """
@@ -88,8 +88,15 @@ class Parser:
                 return self._create_answer(real_name, ratio, names, surnames)
 
     def _is_splittable(self, names):
-        return names[next(reversed(names))] < 1
-
+        splittable = False
+        skip_first = True
+        for name in names:
+            if skip_first:
+                skip_first = False
+            else:
+                if names[name] < 1: return True
+        return False
+        # return names[next(reversed(names))] < 1
 
     def _classify(self, fullname):
         """
@@ -104,6 +111,7 @@ class Parser:
         keep_going, name_complete = True, False
         names, surnames = OrderedDict(), OrderedDict()
         unclassified = []
+        last_processed = None
 
         for word in fullname.split():
             keep_going = True
@@ -111,9 +119,17 @@ class Parser:
                 unclassified.append(word)
                 test = ' '.join(unclassified)
                 prob = self._calculate_name_probability(test)
+                if prob is None and last_processed:
+                    test = last_processed + ' ' + test
+                    prob = self._calculate_name_probability(test)
+
+                    if prob is not None:
+                        if last_processed in names: names.pop(last_processed)
+                        else: surnames.pop(last_processed)
+
                 if prob is not None:
                     if prob > 0.5 and not name_complete:
-                            names[test] = prob
+                        names[test] = prob
                     else:
                         surnames[test] = 1 - prob
                         name_complete = True
@@ -123,23 +139,28 @@ class Parser:
                 if word in self.__ratios:
                     # If word could be a name or surname
                     ratio = self.__ratios[word]
-                    if not names or (ratio < 0.5 and not name_complete):
+                    if not names or (ratio > 0.5 and not name_complete):
                         names[word] = 1 - ratio
                     else:
                         surnames[word] = ratio
                         if ratio == 1:
                             name_complete = True
                     unclassified.clear()
+                    last_processed = word
                 else:
                     if word in self.__names:
                         if not name_complete:
                             names[word] = 1
+                            last_processed = word
                         unclassified.clear()
                     elif word in self.__surnames:
                         if names:
                             surnames[word] = 1
+                            last_processed = word
                             name_complete = True
                             unclassified.clear()
+                        else:
+                            unclassified.append(word)
                     else:
                         if not unclassified:
                             unclassified.append(word)
