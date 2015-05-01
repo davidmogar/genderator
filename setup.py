@@ -6,6 +6,7 @@ from setuptools import setup, find_packages
 
 try:
     import pypandoc
+
     long_description = pypandoc.covert('README.md', 'rst')
 except (IOError, ImportError):
     long_description = ''
@@ -26,5 +27,15 @@ setup(name='genderator',
       download_url='https://github.com/davidmogar/genderator/tarball/' + version,
       keywords=['gender', 'guess', 'spanish', 'name'],
       packages=find_packages(exclude=['tests']),
-      include_package_data=True
+      include_package_data=True,
+      classifiers=[
+          'Development Status :: 4 - Beta',
+          'Topic :: Software Development :: Libraries',
+          'Intended Audience :: Developers',
+          'Intended Audience :: Education',
+          'Intended Audience :: Information Technology',
+          'License :: OSI Approved :: MIT License',
+          'Programming Language :: Python',
+          'Programming Language :: Python :: 3',
+      ]
       )
