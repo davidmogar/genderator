@@ -60,8 +60,8 @@ class Normalizer:
             The text without accent marks.
         """
         good_accents = {
-            u'\N{COMBINING TILDE}',
-            u'\N{COMBINING CEDILLA}'
+            u'\u0303',  # Combining tilde
+            u'\u0327'   # Cedilla
         }
 
         return ''.join(c for c in unicodedata.normalize('NFKD', text)
