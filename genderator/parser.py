@@ -1,5 +1,4 @@
 import codecs
-import json
 import os
 
 from collections import OrderedDict
@@ -13,7 +12,7 @@ class Parser:
     __names, __ratios = {}, {}
     __surnames = []
 
-    def __init__(self, force_split=False):
+    def __init__(self, force_split=True):
         self.__force_split = force_split
         self._load_data()
 
@@ -84,102 +83,114 @@ class Parser:
             names, surnames = self._classify(fullname)
 
             if names and (surnames or (self.__force_split and self._is_splittable(names))):
-                real_name, ratio = self._get_gender_ratio(list(names.keys()))
+                real_name, ratio = self._get_gender_ratio(list(names))
                 return self._create_answer(real_name, ratio, names, surnames)
 
     def _is_splittable(self, names):
-        splittable = False
-        skip_first = True
-        for name in names:
-            if skip_first:
-                skip_first = False
-            else:
-                if names[name] < 1: return True
+        """
+        Check if a list of names can be splitted in names and surnames.
+
+        Params:
+            names: List of name to be checked.
+
+        Returns:
+            True if can be splitted or false otherwise.
+        """
+        names_iterator = iter(names)
+        next(names_iterator)
+        for name in names_iterator:
+            if name in self.__ratios and self.__ratios[name] < 1: return True
         return False
-        # return names[next(reversed(names))] < 1
 
     def _classify(self, fullname):
         """
-        Classify fullname tokens into names and surnames based on datasets.
+        Split fullname into tokens and classify them into names and surnames based on datasets.
 
         Params:
             fullname: Full name to be classified.
 
         Returns:
-            Two OrderedDicts of names and surnames with its confidence ratio.
+            Two lists, one with names and the other with surnames.
         """
-        keep_going, name_complete = True, False
-        names, surnames = OrderedDict(), OrderedDict()
+        names, surnames = [], []
         unclassified = []
-        last_processed = None
+        processed = []
 
         for word in fullname.split():
-            keep_going = True
-            if unclassified:
-                unclassified.append(word)
-                test = ' '.join(unclassified)
-                prob = self._calculate_name_probability(test)
-                if prob is None and last_processed:
-                    test = last_processed + ' ' + test
-                    prob = self._calculate_name_probability(test)
+            if not self._combine_words(processed, word, names):
+                keep_going = True
+                if unclassified:
+                    if self._classify_word(unclassified[-1] + ' ' + word, names, surnames, unclassified):
+                        keep_going = False
+                if keep_going:
+                    if unclassified:
+                        self._classify_word(word, names, surnames)
+                    else:
+                        self._classify_word(word, names, surnames, unclassified)
 
-                    if prob is not None:
-                        if last_processed in names: names.pop(last_processed)
-                        else: surnames.pop(last_processed)
-
-                if prob is not None:
-                    if prob > 0.5 and not name_complete:
-                        names[test] = prob
-                    else:
-                        surnames[test] = 1 - prob
-                        name_complete = True
-                    keep_going = False
-                    unclassified.clear()
-            if keep_going:
-                if word in self.__ratios:
-                    # If word could be a name or surname
-                    ratio = self.__ratios[word]
-                    if not names or (ratio > 0.5 and not name_complete):
-                        names[word] = 1 - ratio
-                    else:
-                        surnames[word] = ratio
-                        if ratio == 1:
-                            name_complete = True
-                    unclassified.clear()
-                    last_processed = word
-                else:
-                    if word in self.__names:
-                        if not name_complete:
-                            names[word] = 1
-                            last_processed = word
-                        unclassified.clear()
-                    elif word in self.__surnames:
-                        if names:
-                            surnames[word] = 1
-                            last_processed = word
-                            name_complete = True
-                            unclassified.clear()
-                        else:
-                            unclassified.append(word)
-                    else:
-                        if not unclassified:
-                            unclassified.append(word)
+                processed.append(word)
 
         return names, surnames
 
-    def _calculate_name_probability(self, word):
+    def _combine_words(self, processed, word, names):
+        """
+        Try to combine last processed word with the word received as parameter.
+
+        If the combination of both words is a name, this is added to the list, replacing
+        the name added previously.
+
+        Params:
+            processed: List of words already processed.
+            word: Current word.
+            names: List of classified names.
+
+        Returns:
+            A valid combination if found or None otherwise.
+        """
+        if processed and names:
+            last_word = processed[-1]
+            if last_word == names[-1]:
+                combination = last_word + ' ' + word
+                if combination in self.__names:
+                    names.pop(names.index(last_word))
+                    names.append(combination)
+                    processed[-1] = combination
+                    return combination
+        return None
+
+    def _classify_word(self, word, names, surnames, unclassified=None):
+        """
+        Try to classify a word in name or surname based on datasets.
+
+        Params:
+            word: Word to be classified.
+            names: List of classified names.
+            surnames: List of classified surnames.
+            unclassified: List of words without match.
+
+        Returns:
+            True if the word was classified. False otherwise.
+        """
+        classified = True
+
         if word in self.__ratios:
-            # If word could be a name or surname
-            ratio = self.__ratios[word]
-            if ratio < 0.5:
-                return 1 - ratio
+            if (not names or self.__ratios[word] > 0.5) and not surnames:
+                names.append(word)
             else:
-                return ratio
+                surnames.append(word)
         else:
-            if word in self.__names:
-                return 1
-            elif word in self.__surnames:
-                return 0
+            if word in self.__surnames and names:
+                surnames.append(word)
+            elif word in self.__names and not surnames:
+                names.append(word)
+            else:
+                if unclassified is not None:
+                    unclassified.append(word)
+                classified = False
+
+        if classified and unclassified is not None: unclassified.clear()
+
+        return classified
 
     def _get_gender_ratio(self, names):
         """
@@ -223,4 +234,4 @@ class Parser:
         male = ratio > 0.5
         answer['gender'] = 'Male' if male else 'Female'
         answer['confidence'] = ratio if male else 1 - ratio
-        return json.dumps(answer, ensure_ascii=False)
+        return answer
