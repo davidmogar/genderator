@@ -35,6 +35,8 @@ manually:
     cd genderator
     python setup.py install
 
+Python 3.3 & 3.4 are supported.
+
 Usage
 -----
 
