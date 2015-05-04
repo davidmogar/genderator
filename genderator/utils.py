@@ -15,8 +15,6 @@ class Normalizer:
         text = Normalizer.remove_extra_whitespaces(text)
         text = Normalizer.replace_hyphens(text)
         text = Normalizer.normalize_unicode(text)
-        # text = Normalizer.remove_accent_marks(text)
-        # text = Normalizer.remove_symbols(text)
 
         return text.lower()
 
