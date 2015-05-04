@@ -15,6 +15,8 @@ class Normalizer:
         text = Normalizer.remove_extra_whitespaces(text)
         text = Normalizer.replace_hyphens(text)
         text = Normalizer.normalize_unicode(text)
+        # text = Normalizer.remove_accent_marks(text)
+        # text = Normalizer.remove_symbols(text)
 
         return text.lower()
 
@@ -37,7 +39,7 @@ class Normalizer:
             u'\N{COMBINING CEDILLA}'
         }
 
-        return ''.join(c for c in unicodedata.normalize('NFKD', text)
+        return ''.join(c for c in unicodedata.normalize('NFKC', text)
                        if unicodedata.category(c) not in categories or c in good_accents)
 
     @staticmethod
@@ -105,5 +107,5 @@ class Normalizer:
             u'\N{COMBINING CEDILLA}'
         }
 
-        return ''.join(c for c in unicodedata.normalize('NFKC', text)
+        return ''.join(c for c in unicodedata.normalize('NFKD', text)
                        if unicodedata.category(c) != 'Mn' or c in good_accents)
