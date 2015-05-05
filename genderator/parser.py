@@ -112,11 +112,8 @@ class Parser:
         Returns:
             True if can be splitted or false otherwise.
         """
-        names_iterator = iter(names)
-        next(names_iterator)
-        for name in names_iterator:
-            if name in self.__ratios and self.__ratios[name] < 1: return True
-        return False
+        last_name = names[-1]
+        return last_name in self.__ratios and self.__ratios[last_name] < 1
 
     def _classify(self, fullname):
         """
@@ -133,12 +130,12 @@ class Parser:
         processed = []
 
         for word in fullname.split():
-            combination_result = None
+            combination_found = False
 
             if self.__force_combinations:
-                combination_result = self._combine_words(processed, word, names)
+                combination_found = self._combine_words(processed, word, names, surnames)
 
-            if combination_result is None:
+            if not combination_found:
                 keep_going = True
                 if unclassified:
                     if self._classify_word(unclassified[-1] + ' ' + word, names, surnames, unclassified):
@@ -153,7 +150,7 @@ class Parser:
 
         return names, surnames
 
-    def _combine_words(self, processed, word, names):
+    def _combine_words(self, processed, word, names, surnames):
         """
         Try to combine last processed word with the word received as parameter.
 
@@ -168,16 +165,25 @@ class Parser:
         Returns:
             A valid combination if found or None otherwise.
         """
-        if processed and names:
+        found_combination = False
+
+        if processed:
             last_word = processed[-1]
-            if last_word == names[-1]:
-                combination = last_word + ' ' + word
-                if combination in self.__names:
-                    names.pop(names.index(last_word))
-                    names.append(combination)
-                    processed[-1] = combination
-                    return combination
-        return None
+            combination = last_word + ' ' + word
+
+            if combination in self.__names:
+                names.append(combination)
+                found_combination = True
+            elif combination in self.__surnames:
+                surnames.append(combination)
+                found_combination = True
+
+        if found_combination:
+            processed[-1] = combination
+            if names and last_word in names: names.pop(names.index(last_word))
+            if surnames and last_word in surnames: surnames.pop(surnames.index(last_word))
+
+        return found_combination
 
     def _classify_word(self, word, names, surnames, unclassified=None):
         """
