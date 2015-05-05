@@ -7,6 +7,7 @@ good_accents = {
     u'\N{LATIN SMALL LETTER C WITH CEDILLA}'
 }
 
+
 class Normalizer:
 
     def normalize(text, options={}):
