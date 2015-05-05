@@ -7,7 +7,7 @@ import genderator
 path = os.path.dirname(__file__)
 
 DELTA = 0.01
-MAX_PERCENTAGE_ERROR = 0.05
+MAX_PERCENTAGE_ERROR = 0.03
 TEST_FILE_LINES = 100000
 
 
@@ -37,11 +37,14 @@ class TestParser(TestCase):
             (name, first_surname, second_surname, male_probability) = line.split('\t')
             fullname = ' '.join([name, first_surname, second_surname])
             answer = self.__parser.guess_gender(fullname)
-            confidence = float(answer['confidence'])
-            calculated_male_probability = confidence if answer['gender'] == 'Male' else 1 - confidence
-
-            if abs(calculated_male_probability - float(male_probability)) > DELTA:
+            if answer is None:
                 mistakes += 1
+            else:
+                confidence = float(answer['confidence'])
+                calculated_male_probability = confidence if answer['gender'] == 'Male' else 1 - confidence
+                if abs(calculated_male_probability - float(male_probability)) > DELTA:
+                    mistakes += 1
+
             self.assertLess(mistakes / TEST_FILE_LINES * 100, MAX_PERCENTAGE_ERROR,
                             'Mistakes percentage greater than ' + str(MAX_PERCENTAGE_ERROR))
 
@@ -49,11 +52,15 @@ class TestParser(TestCase):
         """
         Check if there is a match for every full name in the test file.
         """
+        mistakes = 0
         for line in self.remove_file_comments('valid_names.tsv'):
             (name, first_surname, second_surname, male_probability) = line.split('\t')
             fullname = ' '.join([name, first_surname, second_surname])
             answer = self.__parser.guess_gender(fullname)
-            self.assertIsNotNone(answer, 'Fullname doesn\'t match: ' + fullname)
+            if answer is None:
+                mistakes += 1
+            self.assertLess(mistakes / TEST_FILE_LINES * 100, MAX_PERCENTAGE_ERROR,
+                            'Mistakes percentage greater than ' + str(MAX_PERCENTAGE_ERROR))
 
     def test_name_guessing(self):
         """
@@ -64,10 +71,7 @@ class TestParser(TestCase):
             (name, first_surname, second_surname, male_probability) = line.split('\t')
             fullname = ' '.join([name, first_surname, second_surname])
             answer = self.__parser.guess_gender(fullname)
-            try:
-                if answer['real_name'] != name:
-                    mistakes += 1
-                self.assertLess(mistakes / TEST_FILE_LINES * 100, MAX_PERCENTAGE_ERROR,
-                                'Mistakes percentage greater than ' + str(MAX_PERCENTAGE_ERROR))
-            except TypeError:
-                print(fullname)
+            if answer is None or answer['real_name'] != name:
+                mistakes += 1
+            self.assertLess(mistakes / TEST_FILE_LINES * 100, MAX_PERCENTAGE_ERROR,
+                            'Mistakes percentage greater than ' + str(MAX_PERCENTAGE_ERROR))
