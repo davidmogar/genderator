@@ -19,7 +19,7 @@ class Parser:
         normalizer_options (dict): Normalizer options to be applied.
     """
     __names, __ratios = {}, {}
-    __surnames = []
+    __surnames = set()
 
     def __init__(self, force_combinations=True, force_split=True, normalize=True, normalizer_options={}):
         self.__force_combinations = force_combinations
@@ -66,7 +66,8 @@ class Parser:
         This file contains a list of spanish surnames.
         """
         for line in self.remove_file_comments('surnames_ine.tsv'):
-            self.__surnames.append(line.split('\t')[0])
+            # self.__surnames.append(line.split('\t')[0])
+            self.__surnames.add(line.split('\t')[0])
 
     def remove_file_comments(self, relative_path):
         """
