@@ -54,5 +54,25 @@ else:
 Output:
 
 ```
-OrderedDict([('names', ['david']), ('surnames', ['moreno', 'garcia']), ('real_name', 'david'), ('gender', 'Male'), ('confidence', 1.0)])
+OrderedDict([
+        ('names', ['david']),
+        ('surnames', ['moreno', 'garcia']),
+        ('real_name', 'david'),
+        ('gender', 'Male'),
+        ('confidence', 1.0)
+    ])
 ```
+
+## Options
+Genderator's parser can receive some arguments to control its behaviour. Those arguments are:
+
+- **force_combinations=Boolean**: Force combinations during classification.
+- **force_split=Boolean**: Force name split if no surnames are detected.
+- **normalize=Boolean**: Enable or disable normalization.
+- **normalizer_options=Dictionary**: Normalizer options to be applied.
+
+Normalizer options are a dictionary to control what normalization rules are applied to each name. Possible options are:
+
+- **hyphens**: Boolean option to enable or disable hyphens removal.
+- **symbols**: Boolean option to enable or disable symbols removal.
+- **whitespaces**: Boolean option to enable or disable extra whitespaces removal.
