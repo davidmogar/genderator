@@ -1,7 +1,14 @@
 import unicodedata
 
+good_accents = {
+    u'\N{LATIN CAPITAL LETTER N WITH TILDE}',
+    u'\N{LATIN SMALL LETTER N WITH TILDE}',
+    u'\N{LATIN CAPITAL LETTER C WITH CEDILLA}',
+    u'\N{LATIN SMALL LETTER C WITH CEDILLA}'
+}
 
 class Normalizer:
+
     def normalize(text, options={}):
         """
         Normalize a given text applying all normalizations.
@@ -44,10 +51,6 @@ class Normalizer:
             The text without accent marks and symbols.
         """
         categories = ['Mn', 'Sc', 'Sk', 'Sm', 'So']
-        good_accents = {
-            u'\N{COMBINING TILDE}',
-            u'\N{COMBINING CEDILLA}'
-        }
 
         return ''.join(c for c in unicodedata.normalize('NFKC', text)
                        if unicodedata.category(c) not in categories or c in good_accents)
@@ -63,12 +66,7 @@ class Normalizer:
         Returns:
             The text without accent marks.
         """
-        good_accents = {
-            u'\N{COMBINING TILDE}',
-            u'\N{COMBINING CEDILLA}'
-        }
-
-        return ''.join(c for c in unicodedata.normalize('NFKD', text)
+        return ''.join(c for c in unicodedata.normalize('NFKC', text)
                        if unicodedata.category(c) != 'Mn' or c in good_accents)
 
     @staticmethod
@@ -85,7 +83,7 @@ class Normalizer:
         Returns:
             The text without extra whitespaces.
         """
-        return ' '.join(text.strip().split());
+        return ' '.join(text.strip().split())
 
     @staticmethod
     def replace_hyphens(text):
@@ -111,11 +109,5 @@ class Normalizer:
         Returns:
             The text without symbols.
         """
-
-        good_accents = {
-            u'\N{COMBINING TILDE}',
-            u'\N{COMBINING CEDILLA}'
-        }
-
-        return ''.join(c for c in unicodedata.normalize('NFKD', text)
+        return ''.join(c for c in unicodedata.normalize('NFKC', text)
                        if unicodedata.category(c) != 'Mn' or c in good_accents)
