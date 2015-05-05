@@ -6,7 +6,7 @@ genderator
    :target: https://coveralls.io/r/davidmogar/genderator
 .. image:: https://img.shields.io/pypi/v/genderator.svg
    :target: https://pypi.python.org/pypi/genderator
-.. image:: https://img.shields.io/github/license/davidmogar/genderator.svg
+.. image:: https://img.shields.io/badge/license-MIT-blue.svg
    :target: https://github.com/davidmogar/genderator/blob/master/LICENSE
 
 Genderator is a Python library to process Spanish names (from Spain) to guess their
