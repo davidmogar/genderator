@@ -4,7 +4,7 @@
 [![PyPi](https://img.shields.io/pypi/v/genderator.svg)](https://pypi.python.org/pypi/genderator)
 [![License](https://img.shields.io/github/license/davidmogar/genderator.svg)](https://github.com/davidmogar/genderator/blob/master/LICENSE)
 
-Genderator is a Python library to process spanish names to guess their
+Genderator is a Python library to process Spanish names (from Spain) to guess their
 gender.
 
 For this to work, the libray uses the next datasets from [Instituto
