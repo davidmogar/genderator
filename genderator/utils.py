@@ -2,7 +2,7 @@ import unicodedata
 
 
 class Normalizer:
-    def normalize(text):
+    def normalize(text, options={}):
         """
         Normalize a given text applying all normalizations.
 
@@ -12,9 +12,21 @@ class Normalizer:
         Returns:
             The text normalized.
         """
-        text = Normalizer.remove_extra_whitespaces(text)
-        text = Normalizer.replace_hyphens(text)
-        text = Normalizer.normalize_unicode(text)
+        if options.get('whitespaces', True):
+            text = Normalizer.remove_extra_whitespaces(text)
+
+        if options.get('hyphens', True):
+            text = Normalizer.replace_hyphens(text)
+
+        accents = options.get('hyphens', True)
+        symbols = options.get('symbols', True)
+
+        if accents and symbols:
+            text = Normalizer.normalize_unicode(text)
+        elif accents:
+            text = Normalizer.remove_accent_marks(text)
+        else:
+            text = Normalizer.remove_symbols(text)
 
         return text.lower()
 

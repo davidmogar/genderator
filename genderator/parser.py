@@ -8,12 +8,25 @@ path = os.path.dirname(__file__)
 
 
 class Parser:
+    """
+    This class offers a simple way to parse Spanish name (from Spain), classifying
+    names and surnames and detecting the given name gender.
 
+    Attributes:
+        force_combinations (boolean): Force combinations during classification.
+        force_split (boolean): Force name split if no surnames detected.
+        normalize (boolean): Enable or disable normalization.
+        normalizer_options (dict): Normalizer options to be applied.
+    """
     __names, __ratios = {}, {}
     __surnames = []
 
-    def __init__(self, force_split=True):
+    def __init__(self, force_combinations=True, force_split=True, normalize=True, normalizer_options={}):
+        self.__force_combinations = force_combinations
         self.__force_split = force_split
+        self.__normalize = normalize
+        self.__normalizer_options = normalizer_options
+
         self._load_data()
 
     def _load_data(self):
@@ -79,7 +92,9 @@ class Parser:
             A JSON string with all the computed information.
         """
         if isinstance(fullname, str):
-            fullname = Normalizer.normalize(fullname)
+            if self.__normalize:
+                fullname = Normalizer.normalize(fullname, self.__normalizer_options)
+
             names, surnames = self._classify(fullname)
 
             if names and (surnames or (self.__force_split and self._is_splittable(names))):
@@ -117,7 +132,12 @@ class Parser:
         processed = []
 
         for word in fullname.split():
-            if not self._combine_words(processed, word, names):
+            combination_result = None
+
+            if self.__force_combinations:
+                combination_result = self._combine_words(processed, word, names)
+
+            if combination_result is None:
                 keep_going = True
                 if unclassified:
                     if self._classify_word(unclassified[-1] + ' ' + word, names, surnames, unclassified):
