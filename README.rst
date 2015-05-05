@@ -2,6 +2,8 @@ genderator
 ==========
 .. image:: https://img.shields.io/travis/davidmogar/genderator.svg
    :target: https://travis-ci.org/davidmogar/genderator
+.. image:: https://img.shields.io/coveralls/davidmogar/genderator.svg
+   :target: https://coveralls.io/r/davidmogar/genderator
 .. image:: https://img.shields.io/pypi/v/genderator.svg
    :target: https://pypi.python.org/pypi/genderator
 .. image:: https://img.shields.io/github/license/davidmogar/genderator.svg
