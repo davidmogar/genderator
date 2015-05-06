@@ -1,8 +1,9 @@
 import codecs
 import os
-
 from collections import OrderedDict
+
 from normalizr import Normalizr
+
 
 path = os.path.dirname(__file__)
 
@@ -22,6 +23,8 @@ class Parser:
     __surnames = set()
 
     __normalizr = Normalizr('es')
+    __normalizr_exclusions = set([u'\N{LATIN CAPITAL LETTER N WITH TILDE}', u'\N{LATIN SMALL LETTER N WITH TILDE}',
+        u'\N{LATIN CAPITAL LETTER C WITH CEDILLA}', u'\N{LATIN SMALL LETTER C WITH CEDILLA}'])
 
     def __init__(self, force_combinations=True, force_split=True, normalize=True, normalizer_options={}):
         self.__force_combinations = force_combinations
@@ -47,8 +50,8 @@ class Parser:
         each one to be a male or female name.
         """
         for line in self.remove_file_comments('names_ine.tsv'):
-                (name, frequency, prob_male) = line.split('\t')
-                self.__names[name] = float(prob_male)
+            (name, frequency, prob_male) = line.split('\t')
+            self.__names[name] = float(prob_male)
 
     def _load_name_surname_ratios(self):
         """
@@ -97,8 +100,7 @@ class Parser:
         if isinstance(fullname, str):
             if self.__normalize:
                 fullname = self.__normalizr.remove_extra_whitespaces(fullname)
-                fullname = self.__normalizr.remove_symbols(fullname)
-                fullname = self.__normalizr.remove_punctuation(fullname)
+                fullname = self.__normalizr.remove_symbols(fullname, 'NFKC', self.__normalizr_exclusions).lower()
 
             names, surnames = self._classify(fullname)
 
