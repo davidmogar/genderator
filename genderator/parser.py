@@ -119,8 +119,10 @@ class Parser:
         Returns:
             True if can be splitted or false otherwise.
         """
-        last_name = names[-1]
-        return last_name in self.__ratios and self.__ratios[last_name] < 1
+        if len(names) > 1:
+            last_name = names[-1]
+            return last_name in self.__ratios and self.__ratios[last_name] < 1
+        else: return False
 
     def _classify(self, fullname):
         """
