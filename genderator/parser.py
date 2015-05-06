@@ -24,13 +24,13 @@ class Parser:
 
     __normalizr = Normalizr('es')
     __normalizr_exclusions = set([u'\N{LATIN CAPITAL LETTER N WITH TILDE}', u'\N{LATIN SMALL LETTER N WITH TILDE}',
-        u'\N{LATIN CAPITAL LETTER C WITH CEDILLA}', u'\N{LATIN SMALL LETTER C WITH CEDILLA}'])
+                                  u'\N{LATIN CAPITAL LETTER C WITH CEDILLA}', u'\N{LATIN SMALL LETTER C WITH CEDILLA}'])
 
-    def __init__(self, force_combinations=True, force_split=True, normalize=True, normalizer_options={}):
+    def __init__(self, force_combinations=True, force_split=True, normalize=True, require_surnames=False):
         self.__force_combinations = force_combinations
         self.__force_split = force_split
         self.__normalize = normalize
-        self.__normalizer_options = normalizer_options
+        self.__require_surnames = require_surnames
 
         self._load_data()
 
@@ -105,7 +105,8 @@ class Parser:
 
             names, surnames = self._classify(fullname)
 
-            if names and (surnames or (self.__force_split and self._is_splittable(names))):
+            if names and (not self.__require_surnames or (
+                    surnames or (self.__force_split and self._is_splittable(names)))):
                 real_name, ratio = self._get_gender_ratio(list(names))
                 return self._create_answer(real_name, ratio, names, surnames)
 
@@ -119,10 +120,11 @@ class Parser:
         Returns:
             True if can be splitted or false otherwise.
         """
-        if len(names) > 1:
+        if not self.__require_surnames or len(names) > 1:
             last_name = names[-1]
             return last_name in self.__ratios and self.__ratios[last_name] < 1
-        else: return False
+        else:
+            return False
 
     def _classify(self, fullname):
         """
