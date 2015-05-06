@@ -2,7 +2,7 @@ import codecs
 import os
 
 from collections import OrderedDict
-from .utils import Normalizer
+from normalizr import Normalizr
 
 path = os.path.dirname(__file__)
 
@@ -20,6 +20,8 @@ class Parser:
     """
     __names, __ratios = {}, {}
     __surnames = set()
+
+    __normalizr = Normalizr('es')
 
     def __init__(self, force_combinations=True, force_split=True, normalize=True, normalizer_options={}):
         self.__force_combinations = force_combinations
@@ -94,7 +96,9 @@ class Parser:
         """
         if isinstance(fullname, str):
             if self.__normalize:
-                fullname = Normalizer.normalize(fullname, self.__normalizer_options)
+                fullname = self.__normalizr.remove_extra_whitespaces(fullname)
+                fullname = self.__normalizr.remove_symbols(fullname)
+                fullname = self.__normalizr.remove_punctuation(fullname)
 
             names, surnames = self._classify(fullname)
 
