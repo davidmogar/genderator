@@ -1,7 +1,8 @@
 #!/user/bin/env python
 
-import re
+import re, uuid
 
+from pip.req import parse_requirements
 from setuptools import setup, find_packages
 
 
@@ -12,6 +13,9 @@ version = re.search(
 
 with open("README.rst", "rb") as f:
     long_description = f.read().decode("utf-8")
+
+install_reqs = parse_requirements('requirements.txt', session=uuid.uuid1())
+reqs = [str(req.req) for req in install_reqs]
 
 setup(name='genderator',
       version=version,
@@ -24,7 +28,7 @@ setup(name='genderator',
       download_url='https://github.com/davidmogar/genderator/tarball/' + version,
       keywords=['gender', 'guess', 'spanish', 'name'],
       packages=find_packages(exclude=['tests']),
-      install_requires=['normalizr>=0.1'],
+      install_requires=reqs,
       include_package_data=True,
       classifiers=[
           'Development Status :: 4 - Beta',
