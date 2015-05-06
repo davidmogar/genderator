@@ -24,6 +24,7 @@ setup(name='genderator',
       download_url='https://github.com/davidmogar/genderator/tarball/' + version,
       keywords=['gender', 'guess', 'spanish', 'name'],
       packages=find_packages(exclude=['tests']),
+      install_required=['normalizr>=0.1'],
       include_package_data=True,
       classifiers=[
           'Development Status :: 4 - Beta',
