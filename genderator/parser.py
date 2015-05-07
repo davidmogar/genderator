@@ -100,6 +100,7 @@ class Parser:
         if isinstance(fullname, str):
             if self.__normalize:
                 fullname = self.__normalizr.remove_extra_whitespaces(fullname)
+                fullname = self.__normalizr.replace_hyphens(fullname)
                 fullname = self.__normalizr.remove_symbols(fullname, 'NFKC', self.__normalizr_exclusions)
                 fullname = self.__normalizr.remove_punctuation(fullname, excluded=set('\'')).lower()
 
