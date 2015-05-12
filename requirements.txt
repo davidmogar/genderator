@@ -1,1 +1,1 @@
-normalizr>=0.1.3
+normalizr>=0.1.5
