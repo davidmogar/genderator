@@ -17,7 +17,7 @@ class Parser:
         force_combinations (boolean): Force combinations during classification.
         force_split (boolean): Force name split if no surnames detected.
         normalize (boolean): Enable or disable normalization.
-        normalizer_options (dict): Normalizer options to be applied.
+        require_surnames (boolean): Force the parser to guess gender on full names (those including names and surnames)
     """
     __names, __ratios = {}, {}
     __surnames = set()
@@ -99,9 +99,10 @@ class Parser:
         """
         if isinstance(fullname, str):
             if self.__normalize:
-                fullname = self.__normalizr.replace_symbols(fullname, 'NFKC', self.__normalizr_exclusions)
-                fullname = self.__normalizr.replace_punctuation(fullname, excluded=set('\'')).lower()
                 fullname = self.__normalizr.remove_extra_whitespaces(fullname)
+                fullname = self.__normalizr.replace_hyphens(fullname)
+                fullname = self.__normalizr.remove_symbols(fullname, 'NFKC', self.__normalizr_exclusions)
+                fullname = self.__normalizr.remove_punctuation(fullname, excluded=set('\'')).lower()
 
             names, surnames = self._classify(fullname)
 
