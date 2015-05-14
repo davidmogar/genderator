@@ -23,8 +23,13 @@ class Parser:
     __surnames = set()
 
     __normalizr = Normalizr('es')
-    __normalizr_exclusions = set([u'\N{LATIN CAPITAL LETTER N WITH TILDE}', u'\N{LATIN SMALL LETTER N WITH TILDE}',
-                                  u'\N{LATIN CAPITAL LETTER C WITH CEDILLA}', u'\N{LATIN SMALL LETTER C WITH CEDILLA}'])
+    __normalizations = normalizations = [
+        'replace_hyphens',
+        ('replace_symbols', {'format': 'NFKC', 'excluded': set(['ñ', 'Ñ', 'ç', 'Ç'])}),
+        ('replace_punctuation', {'excluded': set('\'')}),
+        ('remove_accent_marks', {'excluded': set([ u'\N{COMBINING TILDE}'])}),
+        'remove_extra_whitespaces'
+    ]
 
     def __init__(self, force_combinations=True, force_split=True, normalize=True, require_surnames=False):
         self.__force_combinations = force_combinations
@@ -99,10 +104,7 @@ class Parser:
         """
         if isinstance(fullname, str):
             if self.__normalize:
-                fullname = self.__normalizr.replace_hyphens(fullname)
-                fullname = self.__normalizr.replace_symbols(fullname, 'NFKC', self.__normalizr_exclusions)
-                fullname = self.__normalizr.replace_punctuation(fullname, excluded=set('\'')).lower()
-                fullname = self.__normalizr.remove_extra_whitespaces(fullname)
+                fullname = self.__normalizr.normalize(fullname, self.__normalizations).lower()
 
             names, surnames = self._classify(fullname)
 
